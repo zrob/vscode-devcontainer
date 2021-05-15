@@ -5,7 +5,7 @@ Intended to be used as a vscode dev container.
 
 ## Usage
 
-Copy the `Dockerfile` in the projects `.devcontainer/` directory.
+Copy the `Dockerfile` into the project's `.devcontainer/` directory.
 
 Use vscode to create a devcontainer.json or use one from this repo.
 
