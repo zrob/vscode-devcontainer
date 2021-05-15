@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__root_dir="$(cd "$(dirname "${__dir}")" && pwd)"
+
+docker build "$__root_dir" --file Dockerfile.base --tag vscode-base "$@"

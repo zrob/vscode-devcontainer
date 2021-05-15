@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+docker rmi vscode-base
+docker tag zrob/vscode-base vscode-base

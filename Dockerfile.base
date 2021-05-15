@@ -1,0 +1,45 @@
+FROM debian
+
+#####
+# Base packages
+#####
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    locales \
+    procps \
+    sudo \
+    zsh \
+    && rm -rf /var/lib/apt/lists/*
+
+####
+# Setup locale
+####
+RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen \
+    && locale-gen
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+
+####
+# Setup user
+####
+RUN groupadd --gid 1000 zach \
+    && adduser zach --shell /bin/sh --gid 1000 --uid 1000 --gecos '' --disabled-password \
+    && echo '%zach ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER zach
+
+####
+# Install HomeBrew
+####
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.zshenv
+
+####
+# Run workstation setup
+#
+# note: apt-get required for ruby-install
+####
+RUN sudo apt-get update \
+    && git clone https://github.com/zrob/workstation.git ~/.workstation \
+    && /bin/zsh -c "~/.workstation/bin/station -p install linux && ~/.workstation/bin/station" \
+    && sudo rm -rf /var/lib/apt/lists/*

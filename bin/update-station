@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+temp_name="dev-container-refresh"
+
+docker rm "$temp_name" >/dev/null 2>&1 || true
+docker rmi vscode-base >/dev/null 2>&1 || true
+
+docker run -it --name "$temp_name" zrob/vscode-base /bin/zsh -c '
+    sudo apt-get update \
+    && source ~/.zshrc \
+    && station \
+    && sudo rm -rf /var/lib/apt/lists/*
+'
+docker commit "$temp_name" vscode-base
+
+docker rm "$temp_name"
