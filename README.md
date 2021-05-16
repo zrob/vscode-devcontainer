@@ -20,6 +20,6 @@ Most scripts operate on a local image named `vscode-base`. The `tag` script will
 * `build` - Build `Dockerfile.base` as `vscode-base`
 * `rebuild` - Rebuild `Dockerfile.base` as `vscode-base` from scratch
 * `connect` - Open a shell to `vscode-base` to validate any changes
-* `reset-image` - Reset `vscode-base` working image to match `zrob/vscode-base`
+* `reset-image` - Pull `zrob/vscode-base` and reset `vscode-base` working image to match `zrob/vscode-base`
 * `update-station` - Run the `station` command on `vscode-base`
 * `tag` - Tag `vscode-base` as `zrob/vscode-base`
