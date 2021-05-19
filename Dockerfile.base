@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     locales \
+    net-tools\
+    netcat \
     procps \
     sudo \
     zsh \
