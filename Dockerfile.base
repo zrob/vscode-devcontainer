@@ -97,4 +97,5 @@ FROM base-$TARGETARCH AS final
 ####
 RUN sudo apt-get update \
     && /bin/zsh -c "~/.workstation/bin/station" \
+    && /bin/zsh -c "if command -v brew; then brew cleanup -s; rm -rf $(/bin/zsh -c 'brew --cache'); fi" \
     && sudo rm -rf /var/lib/apt/lists/*
