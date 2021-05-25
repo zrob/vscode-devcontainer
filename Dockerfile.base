@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     locales \
+    nano \
     net-tools\
     netcat \
     procps \
