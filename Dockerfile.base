@@ -79,16 +79,6 @@ RUN sudo cp -r /usr/share/doc/git/contrib/diff-highlight /usr/share/git-core/con
     && cd /usr/share/git-core/contrib/diff-highlight \
     && sudo make
 
-####
-# Run aptfile script since we aren't Brewfiling
-####
-RUN ~/.workstation/aptfile.sh
-
-####
-# Apply arm-linx profile
-####
-RUN /bin/zsh -c "~/.workstation/bin/station -p install arm-linux"
-
 FROM base-$TARGETARCH AS final
 
 ####
