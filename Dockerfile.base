@@ -54,7 +54,7 @@ FROM base AS base-arm64
 ####
 RUN git clone https://github.com/postmodern/ruby-install.git ~/cleanup/ruby-install \
     && cd ~/cleanup/ruby-install \
-    && git checkout v0.8.2 \
+    && git checkout v0.8.3 \
     && sudo make install \
     && git clone https://github.com/postmodern/chruby.git ~/cleanup/chruby \
     && cd ~/cleanup/chruby \
