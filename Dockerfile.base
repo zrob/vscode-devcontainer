@@ -1,5 +1,9 @@
 FROM debian AS base
 
+ARG ruby_install_version="v0.9.3"
+ARG chruby_version="v0.3.9"
+ARG golang_version="go1.22.2"
+
 #####
 # Base packages
 #####
@@ -55,11 +59,11 @@ FROM base AS base-arm64
 ####
 RUN git clone https://github.com/postmodern/ruby-install.git ~/cleanup/ruby-install \
     && cd ~/cleanup/ruby-install \
-    && git checkout v0.9.2 \
+    && git checkout ${ruby_install_version} \
     && sudo make install \
     && git clone https://github.com/postmodern/chruby.git ~/cleanup/chruby \
     && cd ~/cleanup/chruby \
-    && git checkout v0.3.9 \
+    && git checkout ${chruby_version} \
     && sudo make install \
     && rm -rf ~/cleanup
 
@@ -67,7 +71,7 @@ RUN git clone https://github.com/postmodern/ruby-install.git ~/cleanup/ruby-inst
 # Install golang
 ####
 RUN mkdir -p ~/cleanup \
-    && curl https://storage.googleapis.com/golang/go1.21.3.linux-arm64.tar.gz --output ~/cleanup/go.tgz \
+    && curl https://storage.googleapis.com/golang/${golang_version}.linux-arm64.tar.gz --output ~/cleanup/go.tgz \
     && sudo tar -C /usr/local -xzf ~/cleanup/go.tgz \
     && echo "export PATH=\"\${PATH}:/usr/local/go/bin\"" > ~/.localrc.d/go-bin-path.zsh \
     && rm -rf ~/cleanup
