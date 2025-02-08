@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     iputils-ping \
-    libyaml-dev \
     locales \
     nano \
     net-tools\
