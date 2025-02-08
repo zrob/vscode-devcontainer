@@ -130,7 +130,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
-          docker buildx imagetools create zrob/vscode-base:latest \
+          docker buildx imagetools create --tag zrob/vscode-base:latest \
             $(printf 'zrob/vscode-base@sha256:%s ' *)
 
       - name: Inspect image
