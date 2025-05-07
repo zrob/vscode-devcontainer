@@ -2,7 +2,7 @@ FROM debian AS base
 
 ARG ruby_install_version="v0.10.1"
 ARG chruby_version="v0.3.9"
-ARG golang_version="go1.24.3"
+ARG golang_version="go1.24.2"
 
 #####
 # Base packages
@@ -14,40 +14,41 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     locales \
     nano \
-    net-tools netcat-openbsd \
+    net-tools\
+    netcat-openbsd \
     procps \
     sudo \
-    zsh &&
-    rm -rf /var/lib/apt/lists/*
+    zsh \
+    && rm -rf /var/lib/apt/lists/*
 
 ####
 # Setup locale
 ####
-RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen &&
-    locale-gen
+RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen \
+    && locale-gen
 ENV LANG='en_US.UTF-8'
 
 ####
 # Setup user
 ####
-RUN groupadd --gid 1000 zach &&
-    adduser zach --shell /bin/sh --gid 1000 --uid 1000 --gecos '' --disabled-password &&
-    echo '%zach ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+RUN groupadd --gid 1000 zach \
+    && adduser zach --shell /bin/sh --gid 1000 --uid 1000 --gecos '' --disabled-password \
+    && echo '%zach ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER zach
 
 ####
 # Clone workstation and apply linux profile
 ####
-RUN git clone https://github.com/zrob/workstation.git ~/.workstation &&
-    /bin/zsh -c "~/.workstation/bin/station -p install linux"
+RUN git clone https://github.com/zrob/workstation.git ~/.workstation \
+    && /bin/zsh -c "~/.workstation/bin/station -p install linux"
 
 FROM base AS base-amd64
 
 ####
 # Install Homebrew
 ####
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &&
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>~/.zshenv
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+    && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.zshenv
 
 FROM base AS base-arm64
 
@@ -56,32 +57,32 @@ FROM base AS base-arm64
 # - chruby
 # - ruby-install
 ####
-RUN git clone https://github.com/postmodern/ruby-install.git ~/cleanup/ruby-install &&
-    cd ~/cleanup/ruby-install &&
-    git checkout ${ruby_install_version} &&
-    sudo make install &&
-    git clone https://github.com/postmodern/chruby.git ~/cleanup/chruby &&
-    cd ~/cleanup/chruby &&
-    git checkout ${chruby_version} &&
-    sudo make install &&
-    rm -rf ~/cleanup
+RUN git clone https://github.com/postmodern/ruby-install.git ~/cleanup/ruby-install \
+    && cd ~/cleanup/ruby-install \
+    && git checkout ${ruby_install_version} \
+    && sudo make install \
+    && git clone https://github.com/postmodern/chruby.git ~/cleanup/chruby \
+    && cd ~/cleanup/chruby \
+    && git checkout ${chruby_version} \
+    && sudo make install \
+    && rm -rf ~/cleanup
 
 ####
 # Install golang
 ####
-RUN mkdir -p ~/cleanup &&
-    curl https://storage.googleapis.com/golang/${golang_version}.linux-arm64.tar.gz --output ~/cleanup/go.tgz &&
-    sudo tar -C /usr/local -xzf ~/cleanup/go.tgz &&
-    echo "export PATH=\"\${PATH}:/usr/local/go/bin\"" >~/.localrc.d/go-bin-path.zsh &&
-    rm -rf ~/cleanup
+RUN mkdir -p ~/cleanup \
+    && curl https://storage.googleapis.com/golang/${golang_version}.linux-arm64.tar.gz --output ~/cleanup/go.tgz \
+    && sudo tar -C /usr/local -xzf ~/cleanup/go.tgz \
+    && echo "export PATH=\"\${PATH}:/usr/local/go/bin\"" > ~/.localrc.d/go-bin-path.zsh \
+    && rm -rf ~/cleanup
 
 ####
 # Setup diff-highlight b/c it doesn't just happen for some sad reason
 # Move to the dir that mirrors brew install so our .gitconfig works in both cases
 ####
-RUN sudo cp -r /usr/share/doc/git/contrib/diff-highlight /usr/share/git-core/contrib/diff-highlight &&
-    cd /usr/share/git-core/contrib/diff-highlight &&
-    sudo make
+RUN sudo cp -r /usr/share/doc/git/contrib/diff-highlight /usr/share/git-core/contrib/diff-highlight \
+    && cd /usr/share/git-core/contrib/diff-highlight \
+    && sudo make
 
 FROM base-$TARGETARCH AS final
 
@@ -90,7 +91,7 @@ FROM base-$TARGETARCH AS final
 #
 # note: apt-get required for ruby-install
 ####
-RUN sudo apt-get update &&
-    /bin/zsh -c "~/.workstation/bin/station" &&
-    /bin/zsh -c "if command -v brew; then brew cleanup -s; rm -rf $(/bin/zsh -c 'brew --cache'); fi" &&
-    sudo rm -rf /var/lib/apt/lists/*
+RUN sudo apt-get update \
+    && /bin/zsh -c "~/.workstation/bin/station" \
+    && /bin/zsh -c "if command -v brew; then brew cleanup -s; rm -rf $(/bin/zsh -c 'brew --cache'); fi" \
+    && sudo rm -rf /var/lib/apt/lists/*
