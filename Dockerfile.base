@@ -72,7 +72,7 @@ RUN git clone https://github.com/postmodern/ruby-install.git ~/cleanup/ruby-inst
 # Install golang
 ####
 RUN mkdir -p ~/cleanup \
-    && curl https://storage.googleapis.com/golang/${golang_version}.linux-arm64.tar.gz --output ~/cleanup/go.tgz \
+    && curl https://dl.google.com/go/${golang_version}.linux-arm64.tar.gz --output ~/cleanup/go.tgz \
     && sudo tar -C /usr/local -xzf ~/cleanup/go.tgz \
     && echo "export PATH=\"\${PATH}:/usr/local/go/bin\"" > ~/.localrc.d/go-bin-path.zsh \
     && rm -rf ~/cleanup
